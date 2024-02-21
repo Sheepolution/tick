@@ -36,7 +36,7 @@ function event.new(parent, fn, delay, recur, err)
   }, event)
 end
 
-function event:after(fn, delay)
+function event:after(delay, fn)
   -- Error check
   if self.recur then
     error("cannot chain a recurring event")
@@ -134,11 +134,11 @@ function tick:event(fn, delay, recur)
   return self:add(event.new(self, fn, delay, recur, self.err))
 end
 
-function tick:delay(fn, delay)
+function tick:delay(delay, fn)
   return self:event(fn, delay, false)
 end
 
-function tick:recur(fn, delay)
+function tick:recur(delay, fn)
   return self:event(fn, delay, true)
 end
 
