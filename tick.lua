@@ -104,17 +104,19 @@ end
 function tick:update(dt)
   for i = #self, 1, -1 do
     local e = self[i]
-    e.timer = e.timer - dt
-    while e.timer <= 0 do
-      if e.recur then
-        e.timer = e.timer + e.delay
-      else
-        self:remove(i)
-      end
-      self.err = e.timer
-      e.fn()
-      if not e.recur then
-        break
+    if not e.paused then
+      e.timer = e.timer - dt
+      while e.timer <= 0 do
+        if e.recur then
+          e.timer = e.timer + e.delay
+        else
+          self:remove(i)
+        end
+        self.err = e.timer
+        e.fn()
+        if not e.recur then
+          break
+        end
       end
     end
   end
