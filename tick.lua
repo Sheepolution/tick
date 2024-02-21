@@ -20,7 +20,6 @@ end
 local noop = function()
 end
 
-
 local event = {}
 event.__index = event
 
@@ -56,8 +55,26 @@ function event:stop()
   tick.remove(self.parent, self)
 end
 
+function event:tween(obj, speed, props)
+  assert(self._flux, "No flux set!", 2)
+  local oldfn = self.fn
+
+  local tween = self._flux:to(obj, speed, props)
+  tween.paused = true
+
+  self.fn = function()
+    oldfn()
+    tween.paused = false
+  end
+  return tween
+end
+
 function tick.group()
   return setmetatable({ err = 0 }, tick)
+end
+
+function tick:flux(lib)
+  self._flux = lib
 end
 
 function tick:add(e)
@@ -128,10 +145,14 @@ function tick:event(fn, delay, recur)
     self.err = d
     fn()
     self.err = err
-    return self:add(event.new(self, noop, delay, recur, self.err))
+    local e = event.new(self, noop, delay, recur, self.err)
+    e._flux = self._flux
+    return self:add(e)
   end
   -- Create, add and return a normal event
-  return self:add(event.new(self, fn, delay, recur, self.err))
+  local e = event.new(self, fn, delay, recur, self.err)
+  e._flux = self._flux
+  return self:add(e)
 end
 
 function tick:delay(delay, fn)
