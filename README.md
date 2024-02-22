@@ -2,6 +2,16 @@
 A small Lua module that simplifies the calling of functions at a set interval
 or after a delay.
 
+## Fork changes
+
+Changes that I made to this library:
+
+* Add the ability to chain with [flux](https://github.com/sheepolution/flux).
+```lua
+tick.delay(2, function() print("Hello world!") end):tween(t, 4, { x = 10 })
+```
+* Change parameters to be delay, fn instead of fn, delay.
+
 ## Usage
 The [tick.lua](tick.lua?raw=1) file should be dropped into an existing project
 and required by it.
